@@ -1,0 +1,107 @@
+(function(){
+  
+angular.module('app', [])
+.controller('Ctrl', function($scope, $timeout, $http) {                    
+    
+    var API_ACCESS_KEY = 'AAAAaKrYtnY:APA91bELpgy4ING7GfEL5H3VeROV-hJDPAeK302xRa_NSDDgqYUTt9fvYg3myrn5LrnA6f-qj11L3cHb0F8FkyWoUT_SAa6Yzl5ffHx4nRhJcqA5OBGMFdmWkt9trA3rv6BojHJQufC5iunOzk7mRhKlmluSCDTKcA';
+    var ajaxUrl = 'https://fcm.googleapis.com/fcm/send';
+    
+    var token = 'AAAAaKrYtnY:APA91bELpgy4ING7GfEL5H3VeROV-hJDPAeK302xRa_NSDDgqYUTt9fvYg3myrn5LrnA6f-qj11L3cHb0F8FkyWoUT_SAa6Yzl5ffHx4nRhJcqA5OBGMFdmWkt9trA3rv6BojHJQufC5iunOzk7mRhKlmluSCDTKcA';
+   
+    var APP_ID = ''; 
+    
+    
+    /*
+      Here we add the tokens ids the cellphone
+      SEE:
+      https://firebase.google.com/docs/cloud-messaging/server
+      https://firebase.google.com/docs/cloud-messaging/concept-options#senderid
+    */
+    var listIds = ['fXpRufJNqAE:APA91bG_kGbNu0HgQj6tePSGdwEGNbicoLPz_LqZ3UxFD-ATSfKMxICw0wXiU2pOK43agjanL7hb64PvM0QEPgHixwgaaT2RMOfdgb2xpS_QGWxz6K6Jn2q72KrbTUyzfQUPeVRYjvDg'];
+    
+    $scope.console = {};
+    $scope.error = null;
+    
+    //$scope.title = "Enter a Title";
+    //$scope.message = "Enter a Message";
+    
+    
+    $scope.send = function(){
+				  
+				  var btn = jQuery('#btnSend');
+				  
+				  var params = {
+            
+  				  registration_ids: listIds,// or "to" param
+    				  data: {
+    				    body: $scope.message,
+    				    title: $scope.title,
+                "title" : $scope.title,
+              "Message Key" : $scope.message,
+    				  },
+    				  body: $scope.message,
+    				  title: $scope.title,
+             "title" : $scope.title,
+
+            "Message Key" : $scope.message,
+
+  				};
+  				
+  				params = {
+            //  app_id: APP_ID,
+           // included_segments: ["All"],
+            //data: {
+    				  //  body: $scope.message,
+    				  //  title: $scope.title
+    			 // },
+            "to" : "/topics/News",
+             "notification": {
+    title : $scope.title,
+    body  : $scope.message,
+    "click_action"  : "SOMEACTIVITY"
+   },"data": {
+     "Message Key"  : $scope.message,
+     "title" : $scope.title,
+     "line1" : "etc",
+   }
+
+
+
+           // contents: {"en": "Are you ok? Open the app"},
+           // headings: {"en": "Hello Carlos"}
+          };
+				  
+				  btn.attr('disabled', true).text('Loading...');
+          
+				  
+          jQuery.ajax({
+            url: ajaxUrl,
+            method: 'post',
+            contentType: 'application/json',
+            processData: false,
+            dataType: 'json',
+            headers: {
+              Authorization: 'key='+API_ACCESS_KEY
+             // Authorization: 'Basic '+token
+            },
+            data: JSON.stringify(params)
+          }).done(function(result){
+            btn.attr('disabled', false).text('Send');
+            $timeout(function(){
+              $scope.console = result;
+              $scope.console = "Message Sent Successfully";
+          
+            });
+          }).fail(function(error){
+            btn.attr('disabled', false).text('Send');
+            $timeout(function(){
+              $scope.error = error.responseText;
+            });
+          });
+          
+    };
+    
+});
+ 
+ 
+})();
